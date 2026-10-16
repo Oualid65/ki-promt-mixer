@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>KI-Prompt Mixer</title>
+  <style>
+    body {
+      background-color: #1010aa;
+      color: #ffffff;
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 60px;
+    }
+
+    .card {
+      background-color: #1a1b26;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      border: 1px solid #2f334d;
+    }
+
+    .prompt-box {
+      background-color: #13141c;
+      padding: 18px;
+      border-radius: 10px;
+      font-family: monospace; /* Typische Code-/Prompt-Schriftart */
+      font-size: 15px;
+      line-height: 1.5;
+      color: #a9b1d6;
+      margin: 20px 0;
+      min-height: 60px;
+    }
+
+    button {
+      background-color: #background: linear-gradient(45deg, #7c3aed, #ec4899);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      font-size: 15px;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 5px;
+    }
+
+    button:hover {
+      background-color: #6d28d9;
+    }
+
+    .copy-btn {
+      background-color: #2f334d; /* Zweiter Button in dezentem Grau-Blau */
+    }
+
+    .copy-btn:hover {
+      background-color: #414868;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>🎥 Higgsfield Prompt-Mixer</h2>
+    <div class="prompt-box" id="idee-text">
+      Klicke auf „Mixen“, um deinen ersten Kamera-Prompt zu bauen!
+    </div>
+    <button onclick="neueIdee()">Prompt mixen 🎲</button>
+    <button class="copy-btn" onclick="kopierePrompt()" id="copy-button">Kopieren 📋</button>
+    <button class="copy-btn" onclick="merkePrompt()">⭐ Merken</button>
+    <ul id="merkliste" style="text-align: left; margin-top: 20px; color: #a9b1d6; font-size: 14px; line-height: 1.6;"></ul>  
+    <button class="copy-btn" onclick="listeLeeren()" style="background-color: #ef4444; margin-top: 10px;">Liste leeren 🗑️</button>
+  </div>
+
+  <script>
+    // Beim Start der Seite direkt die gespeicherten Prompts laden
+    window.onload = function() {
+      const gespeichertePrompts = JSON.parse(localStorage.getItem("meinePrompts")) || [];
+      const liste = document.getElementById("merkliste");
+      
+      gespeichertePrompts.forEach(text => {
+        const neuerPunkt = document.createElement("li");
+        neuerPunkt.innerText = text;
+        liste.appendChild(neuerPunkt);
+      });
+    };
+
+    function zufallsElement(liste) {
+      return liste[Math.floor(Math.random() * liste.length)];
+    }
+
+    function neueIdee() {
+      const subjekt = [
+        "Ein futuristischer Streetwear-Charakter",
+        "Ein goldener Sportwagen",
+        "Ein geheimnisvoller Astronaut",
+        "Ein leuchtender Cyber-Samurai"
+      ];
+
+      const ort = [
+        "in einer regnerischen Neon-Gasse in Tokio",
+        "mitten in einer surrealen Spiegel-Wüste",
+        "auf dem Dach eines Wolkenkratzers bei Sonnenuntergang",
+        "in einer verlassenen unterirdischen Metro-Station"
+      ];
+
+      const kamera = [
+        "dynamische FPV-Drohnenfahrt, 8k, hyperrealistisch",
+        "schneller 360-Grad Orbit-Shot, cineastisches Licht",
+        "langsame Zeitlupe mit starkem Tiefenschärfe-Effekt",
+        "Handheld-Kamera nah am Charakter, Action-Stil"
+      ];
+
+      const fertigerPrompt = zufallsElement(subjekt) + " " + zufallsElement(ort) + ", " + zufallsElement(kamera) + ".";
+
+      document.getElementById("idee-text").innerText = fertigerPrompt;
+      document.getElementById("copy-button").innerText = "Kopieren 📋";
+    }
+
+    function kopierePrompt() {
+      const text = document.getElementById("idee-text").innerText;
+      navigator.clipboard.writeText(text);
+      document.getElementById("copy-button").innerText = "Kopiert! ✅";
+    }
+
+    function merkePrompt() {
+      const text = document.getElementById("idee-text").innerText;
+      
+      // 1. In der visuellen Liste anzeigen
+      const neuerPunkt = document.createElement("li");
+      neuerPunkt.innerText = text;
+      document.getElementById("merkliste").appendChild(neuerPunkt);
+
+      // 2. In den dauerhaften Browser-Speicher (localStorage) schreiben
+      let gespeichertePrompts = JSON.parse(localStorage.getItem("meinePrompts")) || [];
+      gespeichertePrompts.push(text);
+      localStorage.setItem("meinePrompts", JSON.stringify(gespeichertePrompts));
+    }
+    
+    function listeLeeren() {
+      localStorage.removeItem("meinePrompts");
+      document.getElementById("merkliste").innerHTML = "";
+    }
+
+  </script>
+
+</body>
+</html>
